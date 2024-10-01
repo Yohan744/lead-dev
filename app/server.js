@@ -27,4 +27,9 @@ const port = process.env.PORT || 3000;
 app.server = app.listen(port);
 console.log(`listening on port ${port}`);
 
+app.post('/zip', (req, res) => {
+  const tags = res.body.tags
+  res.send(`Tags reçus pour le téléchargement ZIP: ${tags}`);
+})
+
 export {app};

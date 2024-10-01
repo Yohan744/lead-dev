@@ -19,6 +19,11 @@
         <% }) %>
       </ul>
 
+    <form action="/zip" method="POST">
+      <input type="hidden" name="tags" value="<%= tags %>">
+      <button type="submit" class="btn btn-primary">Download ZIP</button>
+    </form>
+
     <% } else { %>
       <div class="alert alert-info"><strong>No results</strong></div>
     <% } %>
