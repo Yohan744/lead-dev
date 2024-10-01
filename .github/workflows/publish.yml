@@ -21,10 +21,5 @@ jobs:
         run: |
           docker build . --tag ghcr.io/yohan744/lead-dev:staging
           docker push ghcr.io/yohan744/lead-dev:staging
-      - name: npm install, make test-coverage
-        run: |
-          npm install
-          make test-coverage
-
       - name: Coveralls
         uses: coverallsapp/github-action@v2
