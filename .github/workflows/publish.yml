@@ -19,5 +19,5 @@ jobs:
           password: ${{ secrets.GHCR_PAT }}
       - name: Build the hello-docker Docker image
         run: |
-          docker build . --tag ghcr.io/Yohan744/lead-dev:staging
-          docker push ghcr.io/Yohan744/lead-dev:staging
+          docker build . --tag ghcr.io/yohan744/lead-dev:staging
+          docker push ghcr.io/yohan744/lead-dev:staging
