@@ -8,24 +8,23 @@
 
     <% if (photos.length) { %>
 
-      <ul>
-        <% photos.forEach(function (photo) { %>
-          <li class="list-unstyled">
-            <a href="<%= photo.media.b %>" class="thumbnail">
-              <img src="<%= photo.media.t %>" alt="Photo - <%= photo.title %>"
-                title="<%= photo.title %>">
-            </a>
-          </li>
-        <% }) %>
-      </ul>
+    <ul>
+      <% photos.forEach(function (photo) { %>
+      <li class="list-unstyled">
+        <a href="<%= photo.media.b %>" class="thumbnail">
+          <img src="<%= photo.media.t %>" alt="Photo - <%= photo.title %>"
+               title="<%= photo.title %>">
+        </a>
+      </li>
+      <% }) %>
+    </ul>
 
     <form action="/zip" method="POST">
-      <input type="hidden" name="tags" value="<%= tags %>">
       <button type="submit" class="btn btn-primary">Download ZIP</button>
     </form>
 
     <% } else { %>
-      <div class="alert alert-info"><strong>No results</strong></div>
+    <div class="alert alert-info"><strong>No results</strong></div>
     <% } %>
 
   </div>
