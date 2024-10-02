@@ -19,8 +19,7 @@
       <% }) %>
     </ul>
 
-    <form action="/zip" method="POST">
-      <input type="hidden" name="tags" value="<%= tagsParameter %>">
+    <form action="/zip?tags=<%= tagsParameter %>" method="POST">
       <button type="submit" class="btn btn-primary">Download ZIP</button>
     </form>
 

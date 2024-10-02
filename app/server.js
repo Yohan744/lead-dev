@@ -1,14 +1,14 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import favicon from 'serve-favicon';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import 'dotenv/config';
 import ejs from 'ejs';
+import express from 'express';
+import path from 'path';
+import favicon from 'serve-favicon';
+import { fileURLToPath } from 'url';
+import main from './listenForMessages.js';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // public assets
 app.use(express.static(path.join(__dirname, 'public')));
@@ -20,11 +20,6 @@ app.engine('.html', ejs.__express);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'html');
 
-app.post('/zip', (req, res) => {
-  const tags = req.body.tags;
-  res.send(`Tags reçus pour le téléchargement ZIP: ${tags}`);
-});
-
 // load route
 import * as routes from './route.js';
 routes.route(app);
@@ -34,4 +29,6 @@ const port = process.env.PORT || 3000;
 app.server = app.listen(port);
 console.log(`listening on port ${port}`);
 
-export {app};
+main()
+
+export { app };

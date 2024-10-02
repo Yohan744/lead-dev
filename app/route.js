@@ -1,5 +1,6 @@
 import * as formValidator from './form_validator.js';
 import * as photoModel from './photo_model.js';
+import publishMessage from '../app.js';
 
 function route(app) {
   app.get('/', (req, res) => {
@@ -37,6 +38,13 @@ function route(app) {
         return res.status(500).send({ error });
       });
   });
+
+  app.post('/zip', async (req, res) => {
+    const tags = req.query.tags
+    await publishMessage(tags);
+    return res.status(200).send({ message: 'Message sent'})
+  })
+
 }
 
 export {route};

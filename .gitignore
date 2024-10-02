@@ -26,6 +26,8 @@ npm-debug.log*
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
+.env
+*.json
 
 # Gradle
 .idea/**/gradle.xml
