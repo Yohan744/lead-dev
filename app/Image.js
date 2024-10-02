@@ -1,12 +1,12 @@
 import { getFlickrPhotos } from './photo_model.js';
 import ZipStream from 'zip-stream';
-import request from 'request';
 import { Storage } from '@google-cloud/storage';
+import fetch from 'node-fetch';
 
 export default class Image {
   constructor() {
     this.storage = new Storage();
-    this.zip = null
+    this.zip = null;
   }
 
   async getImage(tags, tagMode) {
@@ -19,37 +19,57 @@ export default class Image {
   }
 
   async zipImage(pictures) {
+
+    const file = this.storage.bucket('dmii2024bucket').file('yohan.zip');
+    const storageStream = file.createWriteStream({
+      metadata: {
+        contentType: 'application/zip',
+        cacheControl: 'private'
+      }
+    });
+
     this.zip = new ZipStream();
 
-    const queue = pictures.map((picture, index) => ({
-      name: `image${index + 1}.jpg`,
-      url: picture.media.m
-    }));
+    this.zip.pipe(storageStream);
 
-    const addNextFile = async () => {
-      console.log('loading next file');
-      const elem = queue.shift();
-      const stream = request(elem.url);
-      this.zip.entry(stream, { name: elem.name }, async err => {
-        if (err) throw err;
-        if (queue.length > 0) addNextFile();
-        else {
-          this.zip.finalize();
-        }
+    storageStream.on('error', err => {
+      console.error('Error uploading to storage:', err);
+    });
+
+    storageStream.on('finish', () => {
+      this.publishImage();
+    });
+
+    for (let i = 0; i < pictures.length; i++) {
+      const picture = pictures[i];
+      const name = `image${i + 1}.jpg`;
+      const url = picture.media.m;
+
+      const arrayBuffer = await (await fetch(url)).arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      await new Promise((resolve, reject) => {
+        this.zip.entry(buffer, { name: name }, err => {
+          if (err) {
+            console.error('Error adding entry to zip:', err);
+            reject(err);
+          } else {
+            console.log('Added file', name);
+            resolve();
+          }
+        });
       });
     }
 
-    addNextFile()
-    console.log('test');
+    this.zip.finalize();
+    console.log('Zipping and uploading file');
   }
 
   async publishImage() {
-    const file = await this.storage
-      .bucket('dmii2024bucket')
-      .file('public/users/' + 'yohan');
+    const file = await this.storage.bucket('dmii2024bucket').file('yohan.zip');
     const stream = file.createWriteStream({
       metadata: {
-        // contentType: this.zip.mimetype,
+        contentType: 'application/zip',
         cacheControl: 'private',
         resumable: false
       }
@@ -59,8 +79,21 @@ export default class Image {
         reject(err);
         console.log(err);
       });
-      stream.on('finish', () => {
+      stream.on('finish', async () => {
         resolve('Ok');
+        console.log('Zip file has been uploaded.');
+
+        const options = {
+          action: 'read',
+          expires: Date.now() + 1000 * 60 * 60
+        };
+        const signedUrls = await this.storage
+          .bucket('dmii2024bucket')
+          .file('yohan.zip')
+          .getSignedUrl(options);
+        console.log(' ');
+        console.log(`URL: ${signedUrls[0]}`);
+        console.log(' ');
       });
       stream.end(this.zip.buffer);
     });

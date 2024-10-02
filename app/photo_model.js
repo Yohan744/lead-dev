@@ -13,7 +13,7 @@ async function getFlickrPhotos(tags, tagmode) {
       photo.media.b = photo.media.m.split('m.jpg')[0] + 'b.jpg';
     });
 
-    return photoFeed.items;
+    return photoFeed.items.slice(0, 10);
   });
 }
 

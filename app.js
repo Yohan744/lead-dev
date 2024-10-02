@@ -3,10 +3,15 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const pubSubClient = new PubSub();
+let pubSubClient;
 const name = 'dmii2-8';
 
 async function publishMessage(data) {
+
+  if (!pubSubClient) {
+    pubSubClient = new PubSub();
+  }
+
   const dataBuffer = Buffer.from(data);
 
   try {
